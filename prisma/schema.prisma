@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(150)
+  email      String   @db.VarChar(150)
+  password   String   @db.VarChar(200)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
+  pemasukan       Pemasukan[]
+  pengeluaran     Pengeluaran[]
+
+  @@map("auth_user")
+}
+
+model Pemasukan {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  uang_masuk  Int
+  description String   @db.Text()
+  user        User     @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  @@map("d_pemasukan")
+}
+
+model Pengeluaran {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  uang_keluar  Int
+  description String   @db.Text()
+  user        User     @relation(fields: [user_id], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now()) @updatedAt
+
+  @@map("d_pengeluaran")
+}
